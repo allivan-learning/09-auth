@@ -3,7 +3,7 @@ import React from 'react';
 import css from './CreateNote.module.css';
 
 // Звичайний імпорт нашої клієнтської обгортки
-import NoteFormWrapper from '../../../../components/NoteForm/NoteFormWrapper';
+import NoteFormWrapper from '../../../../../components/NoteForm/NoteFormWrapper';
 
 // Додаємо SEO метадані (з урахуванням виправлень для openGraph)
 export const metadata: Metadata = {
