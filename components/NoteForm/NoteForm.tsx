@@ -1,25 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNote } from '../../lib/api/clientApi';
+import { useNoteStore } from '../../lib/store/noteStore'; // Глобальний стор для чернетки
 import css from './NoteForm.module.css';
 
 export default function NoteForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // Локальный стейт для формы вместо Zustand
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tag, setTag] = useState('Todo');
+  // ВИМОГА: Використання глобального драфт-стану замість useState
+  const { title, content, tag, setTitle, setContent, setTag, resetDraft } =
+    useNoteStore();
 
   const mutation = useMutation({
-    mutationFn: createNote, // Строго из clientApi.ts, как в ТЗ
+    mutationFn: createNote,
     onSuccess: () => {
-      // Инвалидируем кэш, чтобы список заметок обновился
       queryClient.invalidateQueries({ queryKey: ['notes'] });
+
+      // ВИМОГА: Скидання драфт-стану після успішного створення
+      resetDraft();
+
       router.push('/notes');
     },
     onError: (err: unknown) => {

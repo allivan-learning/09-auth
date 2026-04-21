@@ -1,17 +1,20 @@
-'use client';
-
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAuthStore } from '../../../lib/store/authStore';
-// Замени 'ProfilePage.module.css' на точное название файла стилей из репозитория GoIT
+import { getMe } from '../../../lib/api/serverApi'; // Тільки серверне API!
 import css from './ProfilePage.module.css';
 
-export default function Profile() {
-  const { user } = useAuthStore();
+// ВИМОГА: Додавання метаданих
+export const metadata: Metadata = {
+  title: 'Profile | NoteHub',
+  description: 'View your profile details',
+};
 
-  // Если юзера еще нет в стейте (например, идет загрузка), AuthProvider
-  // всё равно нас защищает, но чтобы не было ошибок рендера:
-  if (!user) return null;
+export default async function Profile() {
+  // ВИМОГА: Отримання даних на сервері
+  // Якщо запит впаде (401), middleware вже мав нас відсікти,
+  // але серверний fetch — це найнадійніший спосіб.
+  const user = await getMe();
 
   return (
     <main className={css.mainContent}>
@@ -29,6 +32,7 @@ export default function Profile() {
             width={120}
             height={120}
             className={css.avatar}
+            priority // Бажано для LCP зображень
           />
         </div>
         <div className={css.profileInfo}>

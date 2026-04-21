@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
-// Твои импорты путей могут немного отличаться
 import TanStackProvider from '../components/TanStackProvider/TanStackProvider';
 import AuthProvider from '../components/AuthProvider/AuthProvider';
 import Header from '../components/Header/Header';
@@ -17,18 +16,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal, // ДОДАНО: слот для модалок
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode; // ТИПІЗАЦІЯ: слот для модалок
 }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* Провайдер React Query оборачивает ВЕСЬ проект */}
         <TanStackProvider>
-          {/* Провайдер авторизации защищает внутренности */}
           <AuthProvider>
             <Header />
             {children}
+            {modal} {/* ВІДОБРАЖЕННЯ: слот для модалок */}
             <Footer />
           </AuthProvider>
         </TanStackProvider>

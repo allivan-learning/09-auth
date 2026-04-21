@@ -1,21 +1,31 @@
 import { create } from 'zustand';
 
-interface Note {
-  id: string;
+// Описуємо структуру чернетки нотатки
+interface NoteDraftState {
   title: string;
   content: string;
   tag: string;
-  createdAt: string;
+  // Методи для оновлення полів
+  setTitle: (title: string) => void;
+  setContent: (content: string) => void;
+  setTag: (tag: string) => void;
+  // Метод для очищення форми після успіху
+  resetDraft: () => void;
 }
 
-interface NoteState {
-  notes: Note[];
-  setNotes: (notes: Note[]) => void;
-  clearNotes: () => void;
-}
+export const useNoteStore = create<NoteDraftState>((set) => ({
+  title: '',
+  content: '',
+  tag: 'Todo', // Значення за замовчуванням
 
-export const useNoteStore = create<NoteState>((set) => ({
-  notes: [],
-  setNotes: (notes) => set({ notes }),
-  clearNotes: () => set({ notes: [] }),
+  setTitle: (title) => set({ title }),
+  setContent: (content) => set({ content }),
+  setTag: (tag) => set({ tag }),
+
+  resetDraft: () =>
+    set({
+      title: '',
+      content: '',
+      tag: 'Todo',
+    }),
 }));

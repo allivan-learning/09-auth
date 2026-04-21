@@ -1,112 +1,82 @@
-import { api } from './api'; // Берем наш настроенный телефон из соседнего файла
+import { api } from './api';
+import { Note } from '../../types/note';
+import { User } from '../../types/user';
 
-// 1. Описываем, что мы ожидаем получить от формы
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
+// 1. Спочатку ІМПОРТУЄМО типи для використання всередині цього файлу
+import { LoginRequest } from '../../types/LoginRequest';
+import { RegisterRequest } from '../../types/RegisterRequest';
 
-// 2. Создаем функцию логина
-export const login = async (data: LoginRequest) => {
-  // Звоним на сервер по добавочному номеру '/auth/login' и передаем данные (data)
-  const response = await api.post('/auth/login', data);
+// 2. Потім ЕКСПОРТУЄМО їх, щоб сторінки Login/Register теж їх бачили
+export type { LoginRequest, RegisterRequest };
 
-  // Возвращаем то, что ответил сервер (в нашем случае - профиль пользователя)
+// --- Далі весь код запрацює ---
+
+export const login = async (data: LoginRequest): Promise<User> => {
+  const response = await api.post<User>('/auth/login', data);
   return response.data;
 };
 
-// То, что мы отправляем при регистрации
-export interface RegisterRequest {
-  email: string;
-  password: string;
-}
-
-// Сама функция регистрации
-export const register = async (data: RegisterRequest) => {
-  // Обрати внимание, тут адрес /auth/register
-  const response = await api.post('/auth/register', data);
+export const register = async (data: RegisterRequest): Promise<User> => {
+  const response = await api.post<User>('/auth/register', data);
   return response.data;
 };
 
-// Описываем, как выглядит пользователь
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatar: string;
-}
-
-// Функция: "Дай мне мои данные"
-export const getMe = async () => {
-  // Обрати внимание: мы используем get (получить), а не post (отправить)
-  // И мы не передаем никакие data, потому что сервер сам узнает нас по cookie!
-  const response = await api.get('/users/me');
+export const getMe = async (): Promise<User> => {
+  const response = await api.get<User>('/users/me');
   return response.data;
 };
 
-// Функция выхода
-export const logout = async () => {
-  // Просто бьем по эндпоинту /auth/logout
+export const logout = async (): Promise<void> => {
   await api.post('/auth/logout');
-  // Мы даже не ждем данных в ответ, сервер просто удалит сессию у себя
 };
 
-// Удаление заметки
-export const deleteNote = async (id: string): Promise<void> => {
-  await api.delete(`/notes/${id}`);
+export const checkSession = async (): Promise<User> => {
+  const response = await api.get<User>('/auth/session');
+  return response.data;
 };
 
-// Получение списка заметок (если её вдруг тоже нет в этом файле)
-export const fetchNotes = async ({
-  tag,
-  page = 1,
-  perPage = 10,
-  search = '',
-}: {
+// ВИМОГА: Тільки username
+export const updateMe = async (data: { username: string }): Promise<User> => {
+  const response = await api.patch<User>('/users/me', data);
+  return response.data;
+};
+
+// --- Notes ---
+
+export type FetchNotesResponse = Note[] | { notes: Note[]; totalPages: number };
+
+export const fetchNotes = async (params: {
   tag?: string;
   page?: number;
   perPage?: number;
   search?: string;
-}) => {
-  const { data } = await api.get('/notes', {
+}): Promise<FetchNotesResponse> => {
+  // Використовуємо новий тип тут
+  const { data } = await api.get<FetchNotesResponse>('/notes', {
     params: {
-      tag: tag === 'all' ? '' : tag,
-      page,
-      perPage,
-      search,
+      ...params,
+      tag: params.tag === 'all' ? '' : params.tag,
     },
   });
   return data;
 };
 
-export const fetchNoteById = async (id: string) => {
-  const { data } = await api.get(`/notes/${id}`);
+export const fetchNoteById = async (id: string): Promise<Note> => {
+  const { data } = await api.get<Note>(`/notes/${id}`);
   return data;
 };
 
-// Добавь это в clientApi.ts
-
-// Создание заметки
 export const createNote = async (data: {
   title: string;
   content: string;
   tag: string;
-}) => {
-  const response = await api.post('/notes', data);
+}): Promise<Note> => {
+  const response = await api.post<Note>('/notes', data);
   return response.data;
 };
 
-// Проверка сессии
-export const checkSession = async () => {
-  const response = await api.get('/auth/session');
-  return response.data;
-};
-
-// Обновление профиля (понадобится для страницы Edit Profile)
-export const updateMe = async (data: {
-  username?: string;
-  avatar?: string;
-}) => {
-  const response = await api.patch('/users/me', data);
+// ВИМОГА: Повертати видалену нотатку
+export const deleteNote = async (id: string): Promise<Note> => {
+  const response = await api.delete<Note>(`/notes/${id}`);
   return response.data;
 };
