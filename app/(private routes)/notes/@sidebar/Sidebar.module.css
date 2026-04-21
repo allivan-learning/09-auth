@@ -1,0 +1,42 @@
+.sidebarNav {
+  padding: 20px;
+  background-color: #f8f9fa;
+  height: 100%;
+  min-height: calc(100vh - 80px); /* Высота на весь экран минус хедер */
+  border-right: 1px solid #e0e0e0;
+}
+
+.menuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menuItem {
+  width: 100%;
+}
+
+.menuLink {
+  display: block;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.menuLink:hover {
+  background-color: #0070f3;
+  color: white;
+  transform: translateX(5px);
+}
+
+/* Стили для активной ссылки (опционально, если будешь использовать usePathname) */
+.activeLink {
+  background-color: #0070f3;
+  color: white;
+}
