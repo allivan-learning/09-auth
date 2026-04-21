@@ -2,15 +2,15 @@ import React from 'react';
 
 export default function PrivateLayout({
   children,
-  modal, // Сюда Next.js автоматически прокинет папку @modal
+  modal, // Пропс для папки @modal
 }: {
   children: React.ReactNode;
   modal: React.ReactNode;
 }) {
   return (
     <>
-      {children} {/* Тут рендерятся твои профиль и заметки */}
-      {modal} {/* Тут всплывет модалка, когда нужно */}
+      {children}
+      {modal}
     </>
   );
 }
