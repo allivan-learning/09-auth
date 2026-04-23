@@ -9,17 +9,37 @@ import Footer from '../components/Footer/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
+// ЗАМЕНИ СВОЙ БЛОК METADATA НА ЭТОТ:
 export const metadata: Metadata = {
-  title: 'NoteHub',
-  description: 'Your personal notes manager',
+  metadataBase: new URL('https://09-auth-lhor.vercel.app'),
+  title: 'NoteHub | Secure Contact Management',
+  description:
+    'Manage your contacts efficiently with NoteHub. A professional web application built with Next.js 14, TypeScript, and TanStack Query for secure and fast contact management.',
+  openGraph: {
+    title: 'NoteHub | Secure Contact Management',
+    description:
+      'A modern contact management application with secure authentication and real-time synchronization.',
+    url: 'https://09-auth-lhor.vercel.app',
+    siteName: 'NoteHub',
+    images: [
+      {
+        url: '/og-image.png', // Картинка должна лежать в папке public
+        width: 1200,
+        height: 630,
+        alt: 'NoteHub App Preview',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
   children,
-  modal, // ДОДАНО: слот для модалок
+  modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode; // ТИПІЗАЦІЯ: слот для модалок
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="en">
@@ -28,7 +48,7 @@ export default function RootLayout({
           <AuthProvider>
             <Header />
             {children}
-            {modal} {/* ВІДОБРАЖЕННЯ: слот для модалок */}
+            {modal}
             <Footer />
           </AuthProvider>
         </TanStackProvider>
